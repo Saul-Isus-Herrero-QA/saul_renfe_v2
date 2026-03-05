@@ -74,18 +74,7 @@ public class EnablementSearchButton {
     @Test(priority = 1, dataProvider = "paymentData")
     public void InvalidCardPaymentTest(
             String originStation,
-            String destinationStation,
-            String firstName,
-            String firstSurname,
-            String secondSurname,
-            String dni,
-            String email,
-            String phone,
-            String emailBuyer,
-            String phoneBuyer,
-            String bankCard,
-            String expirationDate,
-            String cvv) {
+            String destinationStation) {
 
         TemporaryDataStore.getInstance().set("testCase", "InvalidCardPaymentTest");
 
