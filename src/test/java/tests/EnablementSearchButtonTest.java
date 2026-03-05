@@ -4,10 +4,7 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.testng.ITestResult;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 import steps.Steps;
 import tools.CSVDataProvider;
 import tools.DriverManager;
@@ -21,7 +18,7 @@ import java.util.Date;
 
 import static pages.BasePage.TIMEOUT;
 
-public class EnablementSearchButton {
+public class EnablementSearchButtonTest {
 
     private WebDriver webDriver;
     private Steps steps;
@@ -35,7 +32,7 @@ public class EnablementSearchButton {
     private final String browser = System.getProperty("browser", "chrome");
 
     // ✅ TestNG necesita un constructor sin parámetros
-    public EnablementSearchButton(String browser) {
+    public EnablementSearchButtonTest(String browser) {
     }
 
     /**
@@ -72,9 +69,20 @@ public class EnablementSearchButton {
      * Cada fila del Object[][] debe mapearse exactamente a estos 13 parámetros.
      */
     @Test(priority = 1, dataProvider = "paymentData")
-    public void InvalidCardPaymentTest(
+    public void EnablementSearchButtonTest(
             String originStation,
-            String destinationStation) {
+            String destinationStation,
+            String firstName,
+            String firstSurname,
+            String secondSurname,
+            String dni,
+            String email,
+            String phone,
+            String emailBuyer,
+            String phoneBuyer,
+            String bankCard,
+            String expirationDate,
+            String cvv) {
 
         TemporaryDataStore.getInstance().set("testCase", "InvalidCardPaymentTest");
 
