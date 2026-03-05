@@ -11,7 +11,6 @@ public class DB_Manager {
         String Password = "Password_01";
         Connection con = java.sql.DriverManager.getConnection(URL, User, Password);
         Statement st = con.createStatement();
-        ResultSet rs = st.executeQuery("SELECT * FROM dbo.Taxes_TaxGroup WHERE Name = 'Saul Test 03MARZO2026';");
         while (rs.next()) {
             System.out.println("Tabla: " + rs.getString(1));
         }
