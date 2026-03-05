@@ -18,7 +18,7 @@ import java.util.Date;
 
 import static pages.BasePage.TIMEOUT;
 
-public class EnablementSearchAndPassengersTest {
+public class EnableSearchPassengersResultsTest {
 
     private WebDriver webDriver;
     private Steps steps;
@@ -32,7 +32,7 @@ public class EnablementSearchAndPassengersTest {
     private final String browser = System.getProperty("browser", "chrome");
 
     // ✅ TestNG necesita un constructor sin parámetros
-    public EnablementSearchAndPassengersTest(String browser) {
+    public EnableSearchPassengersResultsTest(String browser) {
     }
 
     /**
@@ -88,6 +88,7 @@ public class EnablementSearchAndPassengersTest {
 
         steps.performSearchOriginAndDestinationStation(originStation, destinationStation);
         steps.selectDepartureDate();
+        steps.verifyJourneyResults();
     }
 
     @AfterMethod

@@ -60,10 +60,17 @@ public class Steps extends BasePage {
     }
 
     /**
+     * Verifies if there are results or not
+     */
+    public void verifyJourneyResults(){
+        new SelectYourTripPage(webDriver).verifyYouAreInSelecionaTuViaje();
+        new SelectYourTripPage(webDriver).assertSearchResultsPresence();
+    }
+
+    /**
      * Selects train and basic fare
      */
     public void selectTrainAndFare(){
-        new SelectYourTripPage(webDriver).verifyYouAreInSelecionaTuViaje();
         new SelectYourTripPage(webDriver).selectFirstValidBasicFareTrain();
     }
 
