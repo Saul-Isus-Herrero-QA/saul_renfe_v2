@@ -54,7 +54,7 @@ public class HomePage extends BasePage {
         originInput.sendKeys(Keys.ENTER);
 
         // Asserts the origin station
-        Assert.assertEquals("VALÈNCIA-JOAQUÍN SOROLLA", originInput.getAttribute("value"));
+        Assert.assertEquals("MADRID (TODAS)", originInput.getAttribute("value"));
     }
 
     /**
@@ -71,7 +71,7 @@ public class HomePage extends BasePage {
         destinationInput.sendKeys(Keys.ENTER);
 
         // Asserts for the destination station
-        Assert.assertEquals("BARCELONA-SANTS", destinationInput.getAttribute("value"));
+        Assert.assertEquals("BARCELONA (TODAS)", destinationInput.getAttribute("value"));
     }
 
     /**

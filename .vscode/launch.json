@@ -4,6 +4,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "DB_Manager",
+            "request": "launch",
+            "mainClass": "tools.DB_Manager",
+            "projectName": "Renfe-Tests-Saul"
+        },
+        {
+            "type": "java",
             "name": "Attach to Maven Debug",
             "request": "attach",
             "hostName": "localhost",

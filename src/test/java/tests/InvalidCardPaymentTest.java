@@ -47,7 +47,7 @@ public class InvalidCardPaymentTest {
         steps = new Steps(webDriver);
     }
 
-    @Test(dataProvider = "paymentData")
+    @Test(priority=1)
     public void InvalidCardPaymentTest(
             String originStation,
             String destinationStation,

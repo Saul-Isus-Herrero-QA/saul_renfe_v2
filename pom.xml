@@ -4,8 +4,8 @@
     <artifactId>Renfe-Tests-Saul</artifactId>
     <version>1.0-SNAPSHOT</version>
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <selenium.version>4.26.0</selenium.version>
         <testng.version>7.10.2</testng.version>
         <webdrivermanager.version>5.9.1</webdrivermanager.version>
@@ -41,6 +41,11 @@
             <artifactId>selenium-devtools-v130</artifactId>
             <version>${selenium.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+            <version>12.6.1.jre11</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -66,7 +71,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
+                <version>3.13.0</version>
                 <configuration>
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
