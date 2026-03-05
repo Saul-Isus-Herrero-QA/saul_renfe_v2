@@ -25,13 +25,18 @@ public class HomePage extends BasePage {
     private By buscarBilleteLocator = By.xpath("//button[@title='Buscar billete']");
     private By nextMonthButton = By.xpath("//button[contains(@class, 'lightpick__next-action')]");
     private By monthYearLabel = By.cssSelector("span.rf-daterange-picker-alternative__month-label");
+    private By passengersButton = By.id("passengers-button");          // botón para abrir el selector
+    private By adultMinusButton = By.id("adult-minus");                // botón -
+    private By adultPlusButton = By.id("adult-plus");                  // botón +
+    private By adultCountLabel = By.id("adult-count");                 // label con el número de adultos
+    private By passengersSummaryLabel = By.id("passengers-summary");   // resumen tipo "1 Adulto"
 
     // Constructor
     public HomePage(WebDriver webDriver) {
         super(webDriver); // Calls the constructor from parent class and its variable
     }
 
-    // ---------- Helper methods ----------
+    // ---------- Helpers generales ----------
 
     /**
      * Returns the "Buscar billete" (search ticket) button.
@@ -49,7 +54,6 @@ public class HomePage extends BasePage {
      * - Otherwise → button MUST be disabled.
      */
     private void assertSearchButtonStateMatchesStations() {
-        // Ensure inputs are present
         WebElement originInput = webDriver.findElement(originInputLocator);
         WebElement destinationInput = webDriver.findElement(destinationInputLocator);
         WebElement searchButton = getSearchButton();
@@ -75,7 +79,97 @@ public class HomePage extends BasePage {
         }
     }
 
-    // ---------- Page actions with assertions ----------
+    // ---------- Helpers de pasajeros (1 adulto) ----------
+
+    /**
+     * Abre el selector de pasajeros.
+     */
+    private void openPassengersSelector() {
+        waitUntilElementIsDisplayed(passengersButton, TIMEOUT);
+        scrollElementIntoView(passengersButton);
+        clickElement(passengersButton);
+    }
+
+    /**
+     * Asserts that the passenger selection is exactly 1 adult.
+     *
+     * - Adult count label must show "1"
+     * - Passenger summary must contain "1" and "Adult" (o "Adulto" según el idioma de la UI)
+     */
+    public void assertOneAdultPassengerSelected() {
+        // Aseguramos que los elementos existen
+        WebElement adultCount = webDriver.findElement(adultCountLabel);
+        String countText = adultCount.getText().trim();
+
+        int currentCount;
+        try {
+            currentCount = Integer.parseInt(countText);
+        } catch (NumberFormatException e) {
+            Assert.fail("Adult count label is not a number. Actual text: '" + countText + "'");
+            return;
+        }
+
+        // 🔹 ASSERT 1: el número de adultos es 1
+        Assert.assertEquals(
+                currentCount,
+                1,
+                "Expected 1 adult passenger but found " + currentCount
+        );
+
+        // 🔹 ASSERT 2: el resumen indica claramente 1 adulto
+        WebElement summary = webDriver.findElement(passengersSummaryLabel);
+        String summaryText = summary.getText().trim().toLowerCase();
+
+        // Ajusta "adult" / "adulto" según el idioma que use la web
+        boolean mentionsOne = summaryText.contains("1");
+        boolean mentionsAdult = summaryText.contains("adult");
+
+        Assert.assertTrue(
+                mentionsOne && mentionsAdult,
+                "Passenger summary must indicate exactly 1 adult. Actual text: '" + summary.getText() + "'"
+        );
+    }
+
+    /**
+     * Selecciona EXPLÍCITAMENTE 1 pasajero adulto y lo valida.
+     * Se llama a este método desde Steps para que HomePage controle también la selección.
+     */
+    public void selectOneAdultPassenger() {
+        openPassengersSelector();
+
+        WebElement adultMinus = webDriver.findElement(adultMinusButton);
+        WebElement adultPlus = webDriver.findElement(adultPlusButton);
+        WebElement adultCount = webDriver.findElement(adultCountLabel);
+
+        // Normalizamos: bajamos hasta 0 adultos (si la UI lo permite)
+        int currentCount;
+        try {
+            currentCount = Integer.parseInt(adultCount.getText().trim());
+        } catch (NumberFormatException e) {
+            throw new AssertionError("Adult count label is not a number. Actual text: '" + adultCount.getText() + "'");
+        }
+
+        while (currentCount > 0) {
+            adultMinus.click();
+            currentCount = Integer.parseInt(adultCount.getText().trim());
+        }
+
+        // Subimos a 1 adulto
+        adultPlus.click();
+        currentCount = Integer.parseInt(adultCount.getText().trim());
+
+        // Valida inmediatamente que hay 1 adulto
+        Assert.assertEquals(
+                currentCount,
+                1,
+                "After selection, the number of adult passengers must be 1."
+        );
+
+        // Y valida el resumen
+        assertOneAdultPassengerSelected();
+    }
+
+    // ---------- Métodos existentes con asserts ----------
 
     /**
      * Accepts all cookies on any page.
@@ -85,14 +179,14 @@ public class HomePage extends BasePage {
         scrollElementIntoView(acceptAllCookiesButton);
         clickElement(acceptAllCookiesButton);
 
-        // After cookies, verify current state rule for the search button
+        // Verificamos regla de botón de búsqueda
         assertSearchButtonStateMatchesStations();
     }
 
     /**
-     * Types the trip origin and asserts the field value and search button rule.
+     * Types the trip origin
      *
-     * @param originStation station to type in origin field
+     * @param originStation
      */
     public void enterOrigin(String originStation) {
         WebElement originInput = webDriver.findElement(originInputLocator);
@@ -103,21 +197,21 @@ public class HomePage extends BasePage {
         originInput.sendKeys(Keys.DOWN);
         originInput.sendKeys(Keys.ENTER);
 
-        // Asserts the origin station (adapt value if needed)
+        // Asserts the origin station
         Assert.assertEquals(
                 originInput.getAttribute("value"),
                 "MADRID (TODAS)",
                 "Origin station value is not as expected."
         );
 
-        // Verify search button rule after modifying origin
+        // Regla del botón de búsqueda
         assertSearchButtonStateMatchesStations();
     }
 
     /**
-     * Types the trip destination and asserts the field value and search button rule.
+     * Types the trip destination
      *
-     * @param destinationStation station to type in destination field
+     * @param destinationStation
      */
     public void enterDestination(String destinationStation) {
         WebElement destinationInput = webDriver.findElement(destinationInputLocator);
@@ -128,26 +222,26 @@ public class HomePage extends BasePage {
         destinationInput.sendKeys(Keys.DOWN);
         destinationInput.sendKeys(Keys.ENTER);
 
-        // Asserts for the destination station (adapt value if needed)
+        // Asserts for the destination station
         Assert.assertEquals(
                 destinationInput.getAttribute("value"),
                 "BARCELONA (TODAS)",
                 "Destination station value is not as expected."
         );
 
-        // Verify search button rule after modifying destination
+        // Regla del botón de búsqueda
         assertSearchButtonStateMatchesStations();
     }
 
     /**
-     * Clicks on the departure date calendar on the 'Home' page.
+     * Clicks on the departure date calendar in the 'Home' page
      */
     public void selectDepartureDate() {
         WebDriverWait wait = new WebDriverWait(webDriver, TIMEOUT);
         WebElement button = wait.until(ExpectedConditions.visibilityOfElementLocated(dateDepartureInput));
         button.click();
 
-        // Changing date should NOT break the button rule
+        // Regla del botón de búsqueda sigue aplicando
         assertSearchButtonStateMatchesStations();
     }
 
@@ -161,7 +255,6 @@ public class HomePage extends BasePage {
         scrollElementIntoView(onlyDepartureRadioButtonLabel);
         setElementSelected(onlyDepartureRadioButtonInput, onlyDepartureRadioButtonLabel, expectedSelected);
 
-        // Extra assert for radio button itself
         WebElement radioInput = webDriver.findElement(onlyDepartureRadioButtonInput);
         Assert.assertEquals(
                 radioInput.isSelected(),
@@ -169,15 +262,15 @@ public class HomePage extends BasePage {
                 "The 'solo ida' radio button selected state does not match the expected value."
         );
 
-        // And still, the button rule must hold
+        // Regla del botón de búsqueda
         assertSearchButtonStateMatchesStations();
     }
 
     /**
      * Selects a departure date, a number of days ahead from the current date.
      *
-     * @param webDriver driver instance (note: also exists as class field)
-     * @param daysAfter number of days to add to the current date
+     * @param webDriver driver instance
+     * @param daysAfter Number of days to add to the current date
      */
     public void selectDateDaysLater(WebDriver webDriver, int daysAfter) {
         LocalDate targetDate = LocalDate.now().plusDays(daysAfter);
@@ -204,26 +297,23 @@ public class HomePage extends BasePage {
         WebElement dayElement = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(dayXpath)));
         dayElement.click();
 
-        // After choosing the day, verify button rule
+        // Regla del botón de búsqueda
         assertSearchButtonStateMatchesStations();
     }
 
     /**
-     * Clicks the 'Accept' button on the calendar on the 'Home' page.
+     * Method to click the 'Accept' button on the calendar in 'Home' page.
      */
     public void clickAcceptButton() {
         waitUntilElementIsDisplayed(acceptButtonLocator, TIMEOUT);
         clickElement(acceptButtonLocator);
 
-        // After closing the calendar, rule must still hold
+        // Regla del botón de búsqueda
         assertSearchButtonStateMatchesStations();
     }
 
     /**
-     * Searches the selected ticket on the 'Home' page.
-     * This method asserts that:
-     *  - Origin and destination are filled
-     *  - Search button is enabled
+     * Searches the selected ticket in the 'Home' page.
      */
     public void clickSearchTicketButton() {
         WebElement originInput = webDriver.findElement(originInputLocator);

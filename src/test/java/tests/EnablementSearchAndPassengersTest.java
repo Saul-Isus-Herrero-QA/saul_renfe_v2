@@ -18,7 +18,7 @@ import java.util.Date;
 
 import static pages.BasePage.TIMEOUT;
 
-public class EnablementSearchButtonTest {
+public class EnablementSearchAndPassengersTest {
 
     private WebDriver webDriver;
     private Steps steps;
@@ -32,7 +32,7 @@ public class EnablementSearchButtonTest {
     private final String browser = System.getProperty("browser", "chrome");
 
     // ✅ TestNG necesita un constructor sin parámetros
-    public EnablementSearchButtonTest(String browser) {
+    public EnablementSearchAndPassengersTest(String browser) {
     }
 
     /**
@@ -69,7 +69,7 @@ public class EnablementSearchButtonTest {
      * Cada fila del Object[][] debe mapearse exactamente a estos 13 parámetros.
      */
     @Test(priority = 1, dataProvider = "paymentData")
-    public void EnablementSearchButtonTest(
+    public void EnablementSearchAndPassengersTest(
             String originStation,
             String destinationStation,
             String firstName,

@@ -212,5 +212,4 @@ public class Steps extends BasePage {
             paymentGatewayPage.checkEnabledButton();
         }
     }
-
 }
